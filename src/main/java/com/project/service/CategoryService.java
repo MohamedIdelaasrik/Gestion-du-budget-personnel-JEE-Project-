@@ -14,7 +14,6 @@ public class CategoryService {
         this.categoryDao = new CategoryDaoImpl();
     }
 
-
     public boolean saveCategory(Category category) {
         Optional<Category> existingCategory = categoryDao.findByNameAndUser(
                 category.getName(), category.getUser());
@@ -33,7 +32,6 @@ public class CategoryService {
         }
     }
 
-
     public boolean updateCategory(Category category) {
         Optional<Category> existing = categoryDao.findByNameAndUser(category.getName(), category.getUser());
 
@@ -51,8 +49,23 @@ public class CategoryService {
         }
     }
 
+    // MODIFICATION ICI : Ajout de l'objet User pour la sécurité
+    public boolean deleteCategory(Long categoryId, User user) {
+        Optional<Category> categoryOpt = categoryDao.findById(categoryId);
 
-    public boolean deleteCategory(Long categoryId) {
+        if (categoryOpt.isEmpty()) {
+            // Catégorie non trouvée
+            return false;
+        }
+
+        Category category = categoryOpt.get();
+
+        // **Vérification de la propriété de l'utilisateur (Sécurité)**
+        if (!category.getUser().getId().equals(user.getId())) {
+            // Tentative de supprimer la catégorie d'un autre utilisateur
+            System.err.println("Tentative de suppression non autorisée de la catégorie ID: " + categoryId + " par l'utilisateur: " + user.getId());
+            return false;
+        }
 
         try {
             categoryDao.delete(categoryId);
@@ -63,11 +76,9 @@ public class CategoryService {
         }
     }
 
-
     public List<Category> getAllCategoriesByUser(User user) {
         return categoryDao.findAllByUser(user);
     }
-
 
     public Optional<Category> getCategoryById(Long id) {
         return categoryDao.findById(id);
