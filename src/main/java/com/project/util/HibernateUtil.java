@@ -2,7 +2,7 @@ package com.project.util;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import com.project.model.User;
+import com.project.model.*;
 
 public class HibernateUtil {
 
