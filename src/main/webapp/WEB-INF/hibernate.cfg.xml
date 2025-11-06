@@ -15,6 +15,7 @@
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.format_sql">true</property>
         <mapping class="com.project.model.User"/>
+        <mapping class="com.project.model.Category"/>
         <property name="hibernate.hbm2ddl.auto">update</property>
 
         </session-factory>

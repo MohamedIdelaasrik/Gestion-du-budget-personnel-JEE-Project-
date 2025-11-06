@@ -1,4 +1,4 @@
-package com.project.web;
+package com.project.controller;
 
 import com.project.model.User;
 import com.project.service.UserService;

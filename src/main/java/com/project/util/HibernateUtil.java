@@ -13,7 +13,7 @@ public class HibernateUtil {
             Configuration configuration = new Configuration().configure("hibernate.cfg.xml");
 
             configuration.addAnnotatedClass(User.class);
-            // configuration.addAnnotatedClass(Transaction.class); // (سنضيف هذه لاحقاً)
+            configuration.addAnnotatedClass(Category.class);
 
             return configuration.buildSessionFactory();
         } catch (Throwable ex) {
