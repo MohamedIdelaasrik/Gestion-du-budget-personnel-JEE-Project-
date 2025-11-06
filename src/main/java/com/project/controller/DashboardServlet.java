@@ -13,40 +13,64 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
 @WebServlet("/dashboard")
 public class DashboardServlet extends HttpServlet {
 
-    private final TransactionService transactionService = new TransactionService();
+    private TransactionService transactionService;
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void init() throws ServletException {
+        this.transactionService = new TransactionService();
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+
+        User currentUser = (session != null) ? (User) session.getAttribute("currentUser") : null;
+
+        if (currentUser == null) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }
 
-        User user = (User) session.getAttribute("user");
+        try {
+            double monthlyBalance = transactionService.calculateMonthlyBalance(currentUser);
+            double weeklyBalance = transactionService.calculateWeeklyBalance(currentUser);
 
-        // Calcul des soldes
-        double monthlyBalance = transactionService.calculateMonthlyBalance(user);
-        double weeklyBalance = transactionService.calculateWeeklyBalance(user);
+            LocalDateTime startOfMonth = LocalDateTime.now().with(TemporalAdjusters.firstDayOfMonth()).toLocalDate().atStartOfDay();
+            LocalDateTime endOfMonth = LocalDateTime.now().with(TemporalAdjusters.lastDayOfMonth()).toLocalDate().atTime(23, 59, 59);
 
-        // Transactions récentes (dernier mois)
-        LocalDateTime startOfMonth = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
-        LocalDateTime endOfMonth = LocalDateTime.now().withDayOfMonth(LocalDateTime.now().toLocalDate().lengthOfMonth())
-                .withHour(23).withMinute(59).withSecond(59);
+            List<Transaction> transactions = transactionService.getTransactionsForPeriod(currentUser, startOfMonth, endOfMonth);
 
-        List<Transaction> recentTransactions = transactionService.getTransactionsForPeriod(user, startOfMonth, endOfMonth);
+            double totalIncome = transactions.stream()
+                    .filter(t -> t.getAmount() > 0)
+                    .mapToDouble(Transaction::getAmount)
+                    .sum();
 
-        // Attributs pour la JSP
-        request.setAttribute("monthlyBalance", monthlyBalance);
-        request.setAttribute("weeklyBalance", weeklyBalance);
-        request.setAttribute("recentTransactions", recentTransactions);
+            double totalExpense = transactions.stream()
+                    .filter(t -> t.getAmount() < 0)
+                    .mapToDouble(Transaction::getAmount)
+                    .sum();
 
-        request.getRequestDispatcher("/views/dashboard.jsp").forward(request, response);
+            request.setAttribute("currentUser", currentUser);
+            request.setAttribute("monthlyBalance", monthlyBalance);
+            request.setAttribute("weeklyBalance", weeklyBalance);
+            request.setAttribute("totalIncome", totalIncome);
+            request.setAttribute("totalExpense", Math.abs(totalExpense));
+            request.setAttribute("recentTransactions", transactions);
+
+            request.getRequestDispatcher("/view/dashboard.jsp").forward(request, response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("errorMessage", "Erreur lors du chargement des données du tableau de bord.");
+            request.getRequestDispatcher("/view/dashboard.jsp").forward(request, response);
+        }
     }
 }
