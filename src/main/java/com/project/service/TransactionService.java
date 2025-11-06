@@ -25,6 +25,30 @@ public class TransactionService {
         transactionDao.save(transaction);
     }
 
+    // NOUVELLE MÉTHODE : Suppression (avec vérification de l'utilisateur)
+    public void deleteTransaction(Long transactionId, User user) throws IllegalArgumentException {
+        Optional<Transaction> transactionOpt = transactionDao.findById(transactionId);
+
+        if (transactionOpt.isEmpty()) {
+            throw new IllegalArgumentException("Transaction non trouvée.");
+        }
+
+        Transaction transaction = transactionOpt.get();
+
+        // Sécurité : Vérifier que la transaction appartient à l'utilisateur
+        if (!transaction.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("Accès non autorisé: Cette transaction ne vous appartient pas.");
+        }
+
+        try {
+            transactionDao.delete(transactionId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erreur lors de la suppression de la transaction en base de données.", e);
+        }
+    }
+
+
     public Optional<Transaction> getTransactionById(Long id) {
         return transactionDao.findById(id);
     }

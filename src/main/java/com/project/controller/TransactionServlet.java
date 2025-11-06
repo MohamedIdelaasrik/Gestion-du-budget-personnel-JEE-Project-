@@ -35,12 +35,20 @@ public class TransactionServlet extends HttpServlet {
 
         String action = request.getPathInfo();
 
+        // Vérification de session au début (bonne pratique)
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("currentUser") == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+
         if (action != null) {
             switch (action) {
                 case "/add":
                     showAddForm(request, response);
                     break;
                 case "/delete":
+                    deleteTransaction(request, response); // Correction : Appel à la méthode
                     break;
                 default:
                     listTransactions(request, response);
@@ -77,6 +85,29 @@ public class TransactionServlet extends HttpServlet {
 
         request.setAttribute("transactionList", transactions);
         request.getRequestDispatcher("/views/list_transactions.jsp").forward(request, response);
+    }
+
+    // NOUVELLE MÉTHODE : Suppression
+    private void deleteTransaction(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        HttpSession session = request.getSession(false);
+        User currentUser = (User) session.getAttribute("currentUser");
+        String transactionIdStr = request.getParameter("id");
+
+        try {
+            Long transactionId = Long.parseLong(transactionIdStr);
+
+            // Appel au service (qui vérifie la propriété)
+            transactionService.deleteTransaction(transactionId, currentUser);
+
+        } catch (Exception e) {
+            // Afficher l'erreur dans une variable de session avant la redirection
+            request.getSession().setAttribute("errorMessage", "Erreur lors de la suppression: " + e.getMessage());
+            e.printStackTrace();
+        }
+        // Rediriger toujours vers la liste après l'action
+        response.sendRedirect(request.getContextPath() + "/transactions");
     }
 
 

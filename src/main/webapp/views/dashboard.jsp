@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 
-<fmt:setLocale value="fr"/>
+<fmt:setLocale value="fr_FR"/>
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -50,6 +50,10 @@
 <div class="container">
     <h2>Tableau de Bord Mensuel</h2>
 
+    <c:if test="${not empty requestScope.errorMessage}">
+        <p style="color: red;">${requestScope.errorMessage}</p>
+    </c:if>
+
     <div class="nav">
         <a href="<%= request.getContextPath() %>/transactions/add">+ Nouvelle Transaction</a>
         <a href="<%= request.getContextPath() %>/categories" class="secondary">Gérer les Catégories</a>
@@ -61,25 +65,29 @@
         <div class="kpi-card">
             <h3>Solde (Mois)</h3>
             <p class="balance">
-                <fmt:formatNumber value="${requestScope.monthlyBalance}" type="currency" currencySymbol="F CFA"/>
+                <%-- Affichage DH --%>
+                <fmt:formatNumber value="${requestScope.monthlyBalance}" minFractionDigits="2" maxFractionDigits="2"/> DH
             </p>
         </div>
         <div class="kpi-card">
             <h3>Revenus (Mois)</h3>
             <p class="income">
-                <fmt:formatNumber value="${requestScope.totalIncome}" type="currency" currencySymbol="F CFA"/>
+                <%-- Affichage DH --%>
+                <fmt:formatNumber value="${requestScope.totalIncome}" minFractionDigits="2" maxFractionDigits="2"/> DH
             </p>
         </div>
         <div class="kpi-card">
             <h3>Dépenses (Mois)</h3>
             <p class="expense">
-                <fmt:formatNumber value="${requestScope.totalExpense}" type="currency" currencySymbol="F CFA"/>
+                <%-- Affichage DH --%>
+                <fmt:formatNumber value="${requestScope.totalExpense}" minFractionDigits="2" maxFractionDigits="2"/> DH
             </p>
         </div>
         <div class="kpi-card">
             <h3>Solde (Semaine)</h3>
             <p class="week">
-                <fmt:formatNumber value="${requestScope.weeklyBalance}" type="currency" currencySymbol="F CFA"/>
+                <%-- Affichage DH --%>
+                <fmt:formatNumber value="${requestScope.weeklyBalance}" minFractionDigits="2" maxFractionDigits="2"/> DH
             </p>
         </div>
     </div>
@@ -98,13 +106,14 @@
         <c:forEach items="${requestScope.recentTransactions}" var="tx">
             <tr>
                 <td>
-                    <fmt:formatDate value="${tx.transactionDate.toLocalDate()}" dateStyle="medium" />
+                    <fmt:formatDate value="${tx.date}" pattern="dd-MM-yyyy"/>
                 </td>
                 <td><c:out value="${tx.category.name}"/></td>
                 <td><c:out value="${tx.description}"/></td>
 
                 <td class="${tx.amount > 0 ? 'tx-income' : 'tx-expense'}">
-                    <fmt:formatNumber value="${tx.amount}" type="currency" currencySymbol="F CFA"/>
+                        <%-- Affichage DH --%>
+                    <fmt:formatNumber value="${tx.amount}" minFractionDigits="2" maxFractionDigits="2"/> DH
                 </td>
             </tr>
         </c:forEach>

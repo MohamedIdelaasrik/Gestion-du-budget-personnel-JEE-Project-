@@ -15,10 +15,10 @@ public class Transaction {
     private Double amount;
 
     @Column(name = "description")
-    private String description; // ✅ الحقل description
+    private String description;
 
     @Column(name = "transaction_date", nullable = false)
-    private LocalDateTime transactionDate; // ✅ الحقل transactionDate
+    private LocalDateTime transactionDate; 
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id", nullable = false)
