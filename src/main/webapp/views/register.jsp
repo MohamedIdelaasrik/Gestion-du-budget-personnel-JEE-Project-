@@ -10,7 +10,9 @@
         h2 { margin-top: 0; }
         .error { color: #d9534f; background-color: #f2dede; border: 1px solid #ebccd1; padding: 10px; border-radius: 4px; margin-bottom: 15px; text-align: left; }
         .success { color: #28a745; background-color: #d4edda; border: 1px solid #c3e6cb; padding: 10px; border-radius: 4px; margin-bottom: 15px; text-align: left; }
-        input[type="text"], input[type="password"] { width: 100%; padding: 10px; margin: 8px 0; display: inline-block; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        input[type="text"], input[type="password"], input[type="email"] { /* Ajout de input[type="email"] */
+            width: 100%; padding: 10px; margin: 8px 0; display: inline-block; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;
+        }
         button { background-color: #28a745; color: white; padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 10px; }
         button:hover { background-color: #218838; }
         a { color: #007bff; text-decoration: none; }
@@ -41,6 +43,12 @@
         <div>
             <input type="text" id="username" name="username" placeholder="Nom d'utilisateur" required>
         </div>
+
+        <%-- NOUVEAU CHAMP EMAIL --%>
+        <div>
+            <input type="email" id="email" name="email" placeholder="Email" required>
+        </div>
+
         <div>
             <input type="password" id="password" name="password" placeholder="Mot de passe" required>
         </div>

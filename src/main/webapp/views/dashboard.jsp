@@ -102,7 +102,8 @@
         <c:forEach items="${requestScope.recentTransactions}" var="tx">
             <tr>
                 <td>
-                    <fmt:formatDate value="${tx.date}" pattern="dd-MM-yyyy"/>
+                        <%-- CORRECTION APPORTÉE ICI : Utilisation de 'transactionDate' au lieu de 'date' --%>
+                    <fmt:formatDate value="${tx.transactionDate}" pattern="dd-MM-yyyy"/>
                 </td>
                 <td><c:out value="${tx.category.name}"/></td>
                 <td><c:out value="${tx.description}"/></td>
