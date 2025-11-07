@@ -65,28 +65,24 @@
         <div class="kpi-card">
             <h3>Solde (Mois)</h3>
             <p class="balance">
-                <%-- Affichage DH --%>
                 <fmt:formatNumber value="${requestScope.monthlyBalance}" minFractionDigits="2" maxFractionDigits="2"/> DH
             </p>
         </div>
         <div class="kpi-card">
             <h3>Revenus (Mois)</h3>
             <p class="income">
-                <%-- Affichage DH --%>
                 <fmt:formatNumber value="${requestScope.totalIncome}" minFractionDigits="2" maxFractionDigits="2"/> DH
             </p>
         </div>
         <div class="kpi-card">
             <h3>Dépenses (Mois)</h3>
             <p class="expense">
-                <%-- Affichage DH --%>
                 <fmt:formatNumber value="${requestScope.totalExpense}" minFractionDigits="2" maxFractionDigits="2"/> DH
             </p>
         </div>
         <div class="kpi-card">
             <h3>Solde (Semaine)</h3>
             <p class="week">
-                <%-- Affichage DH --%>
                 <fmt:formatNumber value="${requestScope.weeklyBalance}" minFractionDigits="2" maxFractionDigits="2"/> DH
             </p>
         </div>
@@ -112,7 +108,6 @@
                 <td><c:out value="${tx.description}"/></td>
 
                 <td class="${tx.amount > 0 ? 'tx-income' : 'tx-expense'}">
-                        <%-- Affichage DH --%>
                     <fmt:formatNumber value="${tx.amount}" minFractionDigits="2" maxFractionDigits="2"/> DH
                 </td>
             </tr>

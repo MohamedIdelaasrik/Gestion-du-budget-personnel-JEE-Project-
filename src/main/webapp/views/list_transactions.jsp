@@ -2,7 +2,6 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 
-<%-- Configuration pour le formatage des nombres --%>
 <fmt:setLocale value="fr_FR" scope="session"/>
 
 <!DOCTYPE html>
@@ -28,10 +27,9 @@
 <div class="container">
     <h1>Historique des Transactions (Mois en cours)</h1>
 
-    <%-- Afficher l'erreur si elle existe dans la session (envoyée par le servlet après suppression) --%>
     <c:if test="${not empty sessionScope.errorMessage}">
-        <p class="session-error">❌ ${sessionScope.errorMessage}</p>
-        <%-- Effacer le message après l'affichage --%>
+        <p class="session-error"> ${sessionScope.errorMessage}</p>
+
         <c:remove var="errorMessage" scope="session"/>
     </c:if>
 
@@ -76,7 +74,6 @@
                             </span>
                 </td>
                 <td>
-                        <%-- Le lien MODIFIER est désactivé si pas de logique d'édition --%>
                     <span style="color: gray;">Modifier (Non implémenté)</span> |
                     <a href="<%= request.getContextPath() %>/transactions/delete?id=<c:out value="${tx.id}"/>" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette transaction?');" style="color: #dc3545;">Supprimer</a>
                 </td>

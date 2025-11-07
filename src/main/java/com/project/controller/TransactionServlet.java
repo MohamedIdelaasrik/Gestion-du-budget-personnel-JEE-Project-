@@ -35,7 +35,6 @@ public class TransactionServlet extends HttpServlet {
 
         String action = request.getPathInfo();
 
-        // Vérification de session au début (bonne pratique)
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("currentUser") == null) {
             response.sendRedirect(request.getContextPath() + "/login");
@@ -48,7 +47,7 @@ public class TransactionServlet extends HttpServlet {
                     showAddForm(request, response);
                     break;
                 case "/delete":
-                    deleteTransaction(request, response); // Correction : Appel à la méthode
+                    deleteTransaction(request, response);
                     break;
                 default:
                     listTransactions(request, response);
@@ -87,7 +86,6 @@ public class TransactionServlet extends HttpServlet {
         request.getRequestDispatcher("/views/list_transactions.jsp").forward(request, response);
     }
 
-    // NOUVELLE MÉTHODE : Suppression
     private void deleteTransaction(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -98,15 +96,14 @@ public class TransactionServlet extends HttpServlet {
         try {
             Long transactionId = Long.parseLong(transactionIdStr);
 
-            // Appel au service (qui vérifie la propriété)
             transactionService.deleteTransaction(transactionId, currentUser);
 
         } catch (Exception e) {
-            // Afficher l'erreur dans une variable de session avant la redirection
+
             request.getSession().setAttribute("errorMessage", "Erreur lors de la suppression: " + e.getMessage());
             e.printStackTrace();
         }
-        // Rediriger toujours vers la liste après l'action
+
         response.sendRedirect(request.getContextPath() + "/transactions");
     }
 

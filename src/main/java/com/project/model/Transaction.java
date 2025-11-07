@@ -18,7 +18,7 @@ public class Transaction {
     private String description;
 
     @Column(name = "transaction_date", nullable = false)
-    private LocalDateTime transactionDate; 
+    private LocalDateTime transactionDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id", nullable = false)

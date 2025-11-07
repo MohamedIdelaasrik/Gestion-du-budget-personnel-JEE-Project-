@@ -65,12 +65,12 @@ public class DashboardServlet extends HttpServlet {
             request.setAttribute("totalExpense", Math.abs(totalExpense));
             request.setAttribute("recentTransactions", transactions);
 
-            request.getRequestDispatcher("/view/dashboard.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/dashboard.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Erreur lors du chargement des données du tableau de bord.");
-            request.getRequestDispatcher("/view/dashboard.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/dashboard.jsp").forward(request, response);
         }
     }
 }

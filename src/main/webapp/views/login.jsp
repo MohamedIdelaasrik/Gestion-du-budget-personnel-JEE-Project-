@@ -17,9 +17,7 @@
     <div class="container">
         <h2>Connexion</h2>
 
-        <%-- 1. Affichage du message d'erreur --%>
         <%
-            // Récupération de l'erreur envoyée par l'AuthServlet
             String errorMessage = (String) request.getAttribute("errorMessage");
             if (errorMessage != null && !errorMessage.isEmpty()) {
         %>
@@ -28,7 +26,6 @@
             }
         %>
 
-        <%-- 2. Formulaire de Connexion --%>
         <form action="<%= request.getContextPath() %>/login" method="POST">
             <div>
                 <label for="username">Nom d'utilisateur:</label>

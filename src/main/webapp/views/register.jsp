@@ -20,7 +20,6 @@
 <div class="container">
     <h2>Créer un Compte</h2>
 
-    <%-- Affichage du message (Erreur ou Succès) --%>
     <%
         String errorMessage = (String) request.getAttribute("errorMessage");
         String successMessage = (String) request.getAttribute("successMessage");

@@ -25,7 +25,6 @@ public class TransactionService {
         transactionDao.save(transaction);
     }
 
-    // NOUVELLE MÉTHODE : Suppression (avec vérification de l'utilisateur)
     public void deleteTransaction(Long transactionId, User user) throws IllegalArgumentException {
         Optional<Transaction> transactionOpt = transactionDao.findById(transactionId);
 
@@ -35,7 +34,6 @@ public class TransactionService {
 
         Transaction transaction = transactionOpt.get();
 
-        // Sécurité : Vérifier que la transaction appartient à l'utilisateur
         if (!transaction.getUser().getId().equals(user.getId())) {
             throw new IllegalArgumentException("Accès non autorisé: Cette transaction ne vous appartient pas.");
         }
