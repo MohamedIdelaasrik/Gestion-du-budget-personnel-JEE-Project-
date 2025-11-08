@@ -8,58 +8,172 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Tableau de Bord</title>
+    <title>Tableau de Bord | Mon Budget</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
-        .header { background-color: #333; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; }
-        .header h1 { margin: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #eef1f5;
+            color: #333;
+        }
+        h1, h2 {
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+
+        .header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header h1 { margin: 0; font-size: 1.8em; }
         .header .user-info { font-size: 0.9em; }
-        .header .user-info a { color: #f9a825; text-decoration: none; }
-        .container { width: 90%; max-width: 1200px; margin: 20px auto; }
-        .nav { margin-bottom: 20px; }
-        .nav a { background-color: #007bff; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px; margin-right: 10px; }
-        .nav a.secondary { background-color: #6c757d; }
+        .header .user-info a {
+            color: #ffcc00;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .header .user-info a:hover {
+            color: #fff;
+        }
 
-        .kpi-container { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px; margin-bottom: 30px; }
-        .kpi-card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; flex-basis: 200px; }
-        .kpi-card h3 { margin: 0 0 10px 0; color: #555; }
-        .kpi-card p { margin: 0; font-size: 1.5em; font-weight: bold; }
-        .kpi-card p.balance { color: #007bff; }
-        .kpi-card p.income { color: #28a745; }
-        .kpi-card p.expense { color: #dc3545; }
-        .kpi-card p.week { color: #17a2b8; }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
 
-        table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-        th { background-color: #f8f8f8; }
-        .tx-income { color: #28a745; font-weight: bold; }
-        .tx-expense { color: #dc3545; }
+        .nav {
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+        }
+        .nav a {
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+        }
+        .nav a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .nav a.primary {
+            background-color: #1abc9c;
+            color: white;
+        }
+        .nav a.secondary {
+            background-color: #bdc3c7;
+            color: #333;
+        }
+
+        .kpi-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .kpi-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            flex-basis: 22%;
+            min-width: 200px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.15);
+        }
+        .kpi-card h3 {
+            margin: 0 0 10px 0;
+            color: #7f8c8d;
+            font-size: 1em;
+            letter-spacing: 0.5px;
+        }
+        .kpi-card p {
+            margin: 0;
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+
+        .kpi-card p.balance { color: #2980b9; }
+        .kpi-card p.income { color: #27ae60; }
+        .kpi-card p.expense { color: #c0392b; }
+        .kpi-card p.week { color: #f39c12; }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+        th, td {
+            border: none;
+            border-bottom: 1px solid #ecf0f1;
+            padding: 15px 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f8f9fa;
+            color: #555;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+
+        .tx-income { color: #27ae60; font-weight: 600; }
+        .tx-expense { color: #c0392b; font-weight: 600; }
+
+        tbody tr:hover {
+            background-color: #fcfcfc;
+        }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <h1>Mon Budget</h1>
-    <div class="user-info">
+<div style="background:linear-gradient(90deg,#2c3e50,#1abc9c);padding:15px 30px;display:flex;justify-content:space-between;align-items:center;border-bottom-left-radius:12px;border-bottom-right-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.15);">
+    <h1 style="color:#2ecc71;margin:0;text-shadow:0 1px 2px rgba(0,0,0,0.3);">Mon Budget 💸</h1>
+    <div style="color:white;font-size:0.9em;">
         Connecté en tant que:
-        <strong><c:out value="${sessionScope.currentUser.username}"/></strong> |
-        <a href="<%= request.getContextPath() %>/auth?action=logout">Déconnexion</a>
+        <strong style="color:#e8ffe8;"><c:out value="👤${sessionScope.currentUser.username} "/></strong>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="<%= request.getContextPath() %>/login?action=logout" style="color:#ffeb99;text-decoration:none;font-weight:600;">Déconnexion</a>
     </div>
 </div>
 
+
 <div class="container">
-    <h2>Tableau de Bord Mensuel</h2>
+    <h2>Tableau de Bord Mensuel </h2>
 
     <c:if test="${not empty requestScope.errorMessage}">
-        <p style="color: red;">${requestScope.errorMessage}</p>
+        <p style="color: #c0392b; background: #fbe6e6; padding: 10px; border-radius: 4px; border: 1px solid #c0392b;">
+            ⚠️ ${requestScope.errorMessage}
+        </p>
     </c:if>
 
     <div class="nav">
-        <a href="<%= request.getContextPath() %>/transactions/add">+ Nouvelle Transaction</a>
-        <a href="<%= request.getContextPath() %>/categories" class="secondary">Gérer les Catégories</a>
-        <a href="<%= request.getContextPath() %>/transactions" class="secondary">Historique des Transactions</a>
+        <a href="<%= request.getContextPath() %>/transactions/add" class="primary">
+            ➕ Nouvelle Transaction
+        </a>
+        <a href="<%= request.getContextPath() %>/categories" class="secondary">
+            Gérer les Catégories 🏷️
+        </a>
+        <a href="<%= request.getContextPath() %>/transactions" class="secondary">
+            Historique des Transactions 📜
+        </a>
     </div>
-
 
     <div class="kpi-container">
         <div class="kpi-card">
@@ -77,7 +191,7 @@
         <div class="kpi-card">
             <h3>Dépenses (Mois)</h3>
             <p class="expense">
-                <fmt:formatNumber value="${requestScope.totalExpense}" minFractionDigits="2" maxFractionDigits="2"/> DH
+                <fmt:formatNumber value="${requestScope.totalExpense * -1}" minFractionDigits="2" maxFractionDigits="2"/> DH
             </p>
         </div>
         <div class="kpi-card">
@@ -88,7 +202,7 @@
         </div>
     </div>
 
-    <h2>Transactions Récentes</h2>
+    <h2>Transactions Récentes ⏱️</h2>
     <table>
         <thead>
         <tr>
@@ -101,13 +215,9 @@
         <tbody>
         <c:forEach items="${requestScope.recentTransactions}" var="tx">
             <tr>
-                <td>
-                        <%-- CORRECTION APPORTÉE ICI : Utilisation de 'transactionDate' au lieu de 'date' --%>
-                    <fmt:formatDate value="${tx.transactionDate}" pattern="dd-MM-yyyy"/>
-                </td>
+                <td><fmt:formatDate value="${tx.date}" pattern="dd-MM-yyyy"/></td>
                 <td><c:out value="${tx.category.name}"/></td>
-                <td><c:out value="${tx.description}"/></td>
-
+                <td><c:out value="${tx.description.length() > 50 ? tx.description.substring(0, 50).concat('...') : tx.description}"/></td>
                 <td class="${tx.amount > 0 ? 'tx-income' : 'tx-expense'}">
                     <fmt:formatNumber value="${tx.amount}" minFractionDigits="2" maxFractionDigits="2"/> DH
                 </td>
@@ -116,7 +226,9 @@
 
         <c:if test="${empty requestScope.recentTransactions}">
             <tr>
-                <td colspan="4" style="text-align: center;">Aucune transaction enregistrée récemment.</td>
+                <td colspan="4" style="text-align: center; color: #7f8c8d; padding: 20px;">
+                    Pas d'activité récente. Commencez par enregistrer une transaction !
+                </td>
             </tr>
         </c:if>
         </tbody>

@@ -49,20 +49,16 @@ public class CategoryService {
         }
     }
 
-    // MODIFICATION ICI : Ajout de l'objet User pour la sécurité
     public boolean deleteCategory(Long categoryId, User user) {
         Optional<Category> categoryOpt = categoryDao.findById(categoryId);
 
         if (categoryOpt.isEmpty()) {
-            // Catégorie non trouvée
             return false;
         }
 
         Category category = categoryOpt.get();
 
-        // **Vérification de la propriété de l'utilisateur (Sécurité)**
         if (!category.getUser().getId().equals(user.getId())) {
-            // Tentative de supprimer la catégorie d'un autre utilisateur
             System.err.println("Tentative de suppression non autorisée de la catégorie ID: " + categoryId + " par l'utilisateur: " + user.getId());
             return false;
         }

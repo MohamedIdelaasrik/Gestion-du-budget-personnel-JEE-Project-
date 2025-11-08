@@ -12,15 +12,17 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import com.project.service.TransactionService;
 
 @WebServlet("/categories/*")
 public class CategoryServlet extends HttpServlet {
 
     private CategoryService categoryService;
-
+    private TransactionService transactionService;
     @Override
     public void init() throws ServletException {
         this.categoryService = new CategoryService();
+        this.transactionService = new TransactionService();
     }
 
     @Override
@@ -90,9 +92,15 @@ public class CategoryServlet extends HttpServlet {
 
                 if (existingCategoryOpt.isPresent()) {
                     Category categoryToUpdate = existingCategoryOpt.get();
+                    String oldType = categoryToUpdate.getType();
+
                     categoryToUpdate.setName(name);
                     categoryToUpdate.setType(type);
                     success = categoryService.updateCategory(categoryToUpdate);
+
+                    if (success && !oldType.equals(type)) {
+                        transactionService.invertAmountsByCategoryId(id);
+                    }
 
                     if (!success) {
                         request.setAttribute("category", categoryToUpdate);

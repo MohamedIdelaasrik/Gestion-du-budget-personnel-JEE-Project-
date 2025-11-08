@@ -19,4 +19,5 @@ public interface TransactionDao {
     List<Transaction> findByUserAndPeriod(User user, LocalDateTime startDate, LocalDateTime endDate);
 
     List<Transaction> findAllByUser(User user);
+    void invertAmountsByCategoryId(Long categoryId);
 }

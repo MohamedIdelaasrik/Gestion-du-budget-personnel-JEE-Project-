@@ -46,6 +46,9 @@ public class TransactionServlet extends HttpServlet {
                 case "/add":
                     showAddForm(request, response);
                     break;
+                case "/edit":
+                    showEditForm(request, response);
+                    break;
                 case "/delete":
                     deleteTransaction(request, response);
                     break;
@@ -68,6 +71,33 @@ public class TransactionServlet extends HttpServlet {
         request.setAttribute("categories", categories);
 
         request.getRequestDispatcher("/views/add_transaction.jsp").forward(request, response);
+    }
+
+    private void showEditForm(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        HttpSession session = request.getSession(false);
+        User currentUser = (User) session.getAttribute("currentUser");
+        String transactionIdStr = request.getParameter("id");
+
+        try {
+            Long transactionId = Long.parseLong(transactionIdStr);
+
+            Transaction transaction = transactionService.getTransactionById(transactionId)
+                    .filter(t -> t.getUser().getId().equals(currentUser.getId()))
+                    .orElseThrow(() -> new IllegalArgumentException("Transaction non trouvée ou non autorisée."));
+
+            List<Category> categories = categoryService.getAllCategoriesByUser(currentUser);
+
+            request.setAttribute("transaction", transaction);
+            request.setAttribute("categories", categories);
+
+            request.getRequestDispatcher("/views/edit_transaction.jsp").forward(request, response);
+
+        } catch (Exception e) {
+            request.getSession().setAttribute("errorMessage", "Erreur lors de l'accès à l'édition: " + e.getMessage());
+            response.sendRedirect(request.getContextPath() + "/transactions");
+        }
     }
 
     private void listTransactions(HttpServletRequest request, HttpServletResponse response)
@@ -113,12 +143,16 @@ public class TransactionServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String action = request.getPathInfo();
+
         if (action != null && action.equals("/add")) {
             insertTransaction(request, response);
+        } else if (action != null && action.equals("/update")) {
+            updateTransaction(request, response);
         } else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Action non supportée.");
         }
     }
+
 
     private void insertTransaction(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -129,7 +163,6 @@ public class TransactionServlet extends HttpServlet {
         String amountStr = request.getParameter("amount");
         String description = request.getParameter("description");
         String categoryIdStr = request.getParameter("categoryId");
-        String type = request.getParameter("type");
 
         try {
             Double amount = Double.parseDouble(amountStr);
@@ -141,15 +174,14 @@ public class TransactionServlet extends HttpServlet {
             }
             Category category = categoryOpt.get();
 
+            double finalAmount = Math.abs(amount);
 
-            if ("EXPENSE".equalsIgnoreCase(type) && amount > 0) {
-                amount *= -1;
-            } else if ("INCOME".equalsIgnoreCase(type) && amount < 0) {
-                amount *= -1;
+            if ("EXPENSE".equalsIgnoreCase(category.getType())) {
+                finalAmount *= -1;
             }
 
             Transaction newTransaction = new Transaction();
-            newTransaction.setAmount(amount);
+            newTransaction.setAmount(finalAmount);
             newTransaction.setDescription(description);
             newTransaction.setCategory(category);
             newTransaction.setUser(currentUser);
@@ -162,6 +194,52 @@ public class TransactionServlet extends HttpServlet {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Erreur lors de l'enregistrement: " + e.getMessage());
             showAddForm(request, response);
+        }
+    }
+
+    private void updateTransaction(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        HttpSession session = request.getSession(false);
+        User currentUser = (User) session.getAttribute("currentUser");
+
+        String transactionIdStr = request.getParameter("id");
+        String amountStr = request.getParameter("amount");
+        String description = request.getParameter("description");
+        String categoryIdStr = request.getParameter("categoryId");
+
+        try {
+            Long transactionId = Long.parseLong(transactionIdStr);
+            Double amount = Double.parseDouble(amountStr);
+            Long categoryId = Long.parseLong(categoryIdStr);
+
+            Transaction existingTransaction = transactionService.getTransactionById(transactionId)
+                    .filter(t -> t.getUser().getId().equals(currentUser.getId()))
+                    .orElseThrow(() -> new IllegalArgumentException("Transaction non trouvée ou non autorisée."));
+
+            Optional<Category> categoryOpt = categoryService.getCategoryById(categoryId);
+            if (categoryOpt.isEmpty() || !categoryOpt.get().getUser().getId().equals(currentUser.getId())) {
+                throw new IllegalArgumentException("Catégorie invalide ou n'appartient pas à cet utilisateur.");
+            }
+            Category category = categoryOpt.get();
+
+            double finalAmount = Math.abs(amount);
+            if ("EXPENSE".equalsIgnoreCase(category.getType())) {
+                finalAmount *= -1;
+            }
+
+            existingTransaction.setAmount(finalAmount);
+            existingTransaction.setDescription(description);
+            existingTransaction.setCategory(category);
+
+            transactionService.updateTransaction(existingTransaction);
+
+            response.sendRedirect(request.getContextPath() + "/transactions");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("errorMessage", "Erreur lors de la modification: " + e.getMessage());
+            showEditForm(request, response);
         }
     }
 }

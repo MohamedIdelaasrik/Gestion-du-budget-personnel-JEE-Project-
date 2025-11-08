@@ -5,7 +5,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Modifier Catégorie | Mon Budget</title>
+    <title>Modifier la Transaction | Mon Budget</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -75,6 +75,15 @@
             font-size: 1.6em;
         }
 
+        .form-container h1 {
+            color: #2c3e50;
+            text-align: center;
+            font-size: 1.8em;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+
         .error {
             color: #c0392b;
             background: #fbe6e6;
@@ -99,6 +108,7 @@
         }
 
         input[type="text"],
+        input[type="number"],
         select {
             width: 100%;
             padding: 12px 15px;
@@ -111,28 +121,39 @@
         }
 
         input[type="text"]:focus,
+        input[type="number"]:focus,
         select:focus {
             outline: none;
             border-color: #1abc9c;
             box-shadow: 0 0 8px rgba(26, 188, 156, 0.3);
         }
 
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
         .submit-button {
-            background-color: #1abc9c;
-            color: white;
+            background-color: #f39c12;
+            color: #333;
             padding: 12px 20px;
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            margin-top: 15px;
+            margin-top: 20px;
             width: 100%;
             font-size: 1.1em;
-            font-weight: 600;
+            font-weight: 700;
             transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
         }
 
         .submit-button:hover {
-            background-color: #16a085;
+            background-color: #e67e22;
+            color: white;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
@@ -165,7 +186,7 @@
 </div>
 
 <div class="form-container">
-    <h2>Modifier la Catégorie ✏️</h2>
+    <h1>Modifier la Transaction #<c:out value="${requestScope.transaction.id}"/> 🛠️</h1>
 
     <c:if test="${not empty requestScope.errorMessage}">
         <p class="error">
@@ -173,30 +194,49 @@
         </p>
     </c:if>
 
-    <c:set var="category" value="${requestScope.category}"/>
+    <form action="<%= request.getContextPath() %>/transactions/update" method="POST">
 
-    <form action="<%= request.getContextPath() %>/categories/update" method="POST">
-
-        <input type="hidden" name="id" value="${category.id}">
+        <input type="hidden" name="id" value="${requestScope.transaction.id}">
 
         <div class="form-group">
-            <label for="name">Nom de la Catégorie:</label>
-            <input type="text" id="name" name="name" value="${category.name}" required>
+            <label for="amount">Montant (Entrez la valeur absolue):</label>
+            <input type="number"
+                   id="amount"
+                   name="amount"
+                   step="0.01"
+                   required min="0.01"
+                   placeholder="Ex: 150.50"
+                   value="${requestScope.transaction.amount >= 0 ? requestScope.transaction.amount : requestScope.transaction.amount * -1}">
         </div>
 
         <div class="form-group">
-            <label for="type">Type:</label>
-            <select id="type" name="type" required>
-                <option value="EXPENSE" ${category.type == 'EXPENSE' ? 'selected' : ''}>Dépense (Sortie)</option>
-                <option value="INCOME" ${category.type == 'INCOME' ? 'selected' : ''}>Revenu (Entrée)</option>
+            <label for="description">Description (Optionnel):</label>
+            <input type="text"
+                   id="description"
+                   name="description"
+                   maxlength="255"
+                   placeholder="Ex: Courses au supermarché"
+                   value="<c:out value="${requestScope.transaction.description}"/>">
+        </div>
+
+        <div class="form-group">
+            <label for="categoryId">Catégorie:</label>
+            <select id="categoryId" name="categoryId" required>
+                <option value="">-- Choisir une catégorie --</option>
+                <c:forEach items="${requestScope.categories}" var="cat">
+                    <option value="${cat.id}"
+                            <c:if test="${cat.id == requestScope.transaction.category.id}">selected</c:if>>
+                        <c:out value="${cat.name}"/> (<c:out value="${cat.type == 'INCOME' ? 'Revenu' : 'Dépense'}"/>)
+                    </option>
+                </c:forEach>
             </select>
         </div>
 
-        <button type="submit" class="submit-button">Mettre à Jour la Catégorie</button>
+        <button type="submit" class="submit-button">Enregistrer les Modifications</button>
     </form>
 
-    <a href="<%= request.getContextPath() %>/categories" class="back-link">
-        ← Annuler et retourner à la liste
+    <a href="<%= request.getContextPath() %>/transactions" class="back-link">
+        ← Annuler et retourner à la liste des transactions
     </a>
 </div>
 

@@ -31,13 +31,13 @@ public class RegisterServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String username = request.getParameter("username");
-        String email = request.getParameter("email"); // NOUVEAU
+        String email = request.getParameter("email");
         String password = request.getParameter("password");
 
         try {
             User newUser = new User();
             newUser.setUsername(username);
-            newUser.setEmail(email); // NOUVEAU : Le setter doit exister dans la classe User
+            newUser.setEmail(email);
             newUser.setPassword(password);
 
             userService.registerUser(newUser);

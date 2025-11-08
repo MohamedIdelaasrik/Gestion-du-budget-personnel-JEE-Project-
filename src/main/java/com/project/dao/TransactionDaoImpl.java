@@ -97,4 +97,21 @@ public class TransactionDaoImpl implements TransactionDao {
             return List.of();
         }
     }
+    public void invertAmountsByCategoryId(Long categoryId) {
+        org.hibernate.Transaction tx = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            tx = session.beginTransaction();
+
+            String hql = "UPDATE Transaction t SET t.amount = -t.amount WHERE t.category.id = :categoryId";
+
+            session.createQuery(hql)
+                    .setParameter("categoryId", categoryId)
+                    .executeUpdate();
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+        }
+    }
 }

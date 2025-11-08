@@ -46,6 +46,16 @@ public class TransactionService {
         }
     }
 
+    public void updateTransaction(Transaction transaction) {
+        if (transaction.getAmount() == null || transaction.getAmount() == 0.0) {
+            throw new IllegalArgumentException("Le montant de la transaction ne peut pas être zéro.");
+        }
+        transactionDao.update(transaction);
+    }
+
+    public void invertAmountsByCategoryId(Long categoryId) {
+        transactionDao.invertAmountsByCategoryId(categoryId);
+    }
 
     public Optional<Transaction> getTransactionById(Long id) {
         return transactionDao.findById(id);

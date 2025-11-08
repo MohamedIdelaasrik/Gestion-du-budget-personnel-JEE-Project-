@@ -2,7 +2,8 @@ package com.project.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-
+import java.util.Date;
+import java.time.ZoneId;
 @Entity
 @Table(name = "transactions")
 public class Transaction {
@@ -53,4 +54,10 @@ public class Transaction {
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
+    public Date getDate() {
+        if (this.transactionDate == null) {
+            return null;
+        }
+        return Date.from(this.transactionDate.atZone(ZoneId.systemDefault()).toInstant());
+    }
 }
