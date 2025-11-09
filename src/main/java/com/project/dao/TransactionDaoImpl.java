@@ -114,4 +114,63 @@ public class TransactionDaoImpl implements TransactionDao {
             e.printStackTrace();
         }
     }
+
+    public Double getBalanceBeforeDate(User user, LocalDateTime beforeDate) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Query<Double> query = session.createQuery(
+                    "SELECT SUM(t.amount) FROM Transaction t WHERE t.user = :user AND t.transactionDate < :beforeDate",
+                    Double.class);
+            query.setParameter("user", user);
+            query.setParameter("beforeDate", beforeDate);
+            Double result = query.uniqueResult();
+            return (result != null) ? result : 0.0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0.0;
+        }
+    }
+
+    public Double getGlobalIncome(User user) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Query<Double> query = session.createQuery(
+                    "SELECT SUM(t.amount) FROM Transaction t WHERE t.user = :user AND t.amount > 0",
+                    Double.class);
+            query.setParameter("user", user);
+            Double result = query.uniqueResult();
+            return (result != null) ? result : 0.0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0.0;
+        }
+    }
+
+    public Double getGlobalExpenses(User user) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Query<Double> query = session.createQuery(
+                    "SELECT SUM(t.amount) FROM Transaction t WHERE t.user = :user AND t.amount < 0",
+                    Double.class);
+            query.setParameter("user", user);
+            Double result = query.uniqueResult();
+            return (result != null) ? result : 0.0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0.0;
+        }
+    }
+
+    public Double getMaxMonthlyExpense(User user, LocalDateTime startDate, LocalDateTime endDate) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Query<Double> query = session.createQuery(
+                    "SELECT MIN(t.amount) FROM Transaction t WHERE t.user = :user AND t.amount < 0 AND t.transactionDate >= :start AND t.transactionDate <= :end",
+                    Double.class);
+            query.setParameter("user", user);
+            query.setParameter("start", startDate);
+            query.setParameter("end", endDate);
+            Double result = query.uniqueResult();
+            return (result != null) ? result : 0.0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0.0;
+        }
+    }
 }

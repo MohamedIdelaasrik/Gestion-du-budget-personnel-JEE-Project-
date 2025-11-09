@@ -78,12 +78,38 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public Optional<User> findByEmail(String email) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Query<User> query = session.createQuery(
+                    "FROM User WHERE email = :email", User.class);
+            query.setParameter("email", email);
+
+            return query.uniqueResultOptional();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
+    @Override
     public List<User> findAll() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery("FROM User", User.class).list();
         } catch (Exception e) {
             e.printStackTrace();
             return List.of();
+        }
+    }
+
+    @Override
+    public Optional<User> findById(Long id) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            User user = session.find(User.class, id);
+            return Optional.ofNullable(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
         }
     }
 }

@@ -9,167 +9,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Historique des Transactions | Mon Budget</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #eef1f5;
-            color: #333;
-        }
-        h1, h2 {
-            color: #1a1a1a;
-            font-weight: 600;
-        }
-
-        .header {
-            background: linear-gradient(90deg, #2c3e50, #1abc9c);
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom-left-radius: 12px;
-            border-bottom-right-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-        }
-        .header .logo {
-            color: #2ecc71;
-            margin: 0;
-            font-size: 1.8em;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-        }
-        .header .user-info {
-            color: white;
-            font-size: 0.9em;
-        }
-        .header .user-info strong {
-            color: #e8ffe8;
-        }
-        .header .user-info a {
-            color: #ffeb99;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s;
-        }
-        .header .user-info a:hover {
-            color: #fff;
-        }
-
-        .container {
-            width: 95%;
-            max-width: 1200px;
-            margin: 30px auto;
-        }
-
-        .session-error {
-            color: #c0392b;
-            background: #fbe6e6;
-            padding: 12px 15px;
-            border-radius: 8px;
-            border: 1px solid #e74c3c;
-            margin-bottom: 20px;
-            font-weight: 500;
-            text-align: center;
-        }
-
-        .action-bar {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .button-link {
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .button-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .button-link.primary {
-            background-color: #1abc9c;
-            color: white;
-        }
-        .button-link.secondary {
-            background-color: #bdc3c7;
-            color: #333;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-        }
-        th, td {
-            border: none;
-            border-bottom: 1px solid #ecf0f1;
-            padding: 15px 12px;
-            text-align: left;
-        }
-        th {
-            background-color: #f8f9fa;
-            color: #555;
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 0.9em;
-        }
-        tbody tr:last-child td {
-            border-bottom: none;
-        }
-        tbody tr:hover {
-            background-color: #fcfcfc;
-        }
-
-        .tx-income {
-            color: #27ae60;
-            font-weight: 700;
-        }
-        .tx-expense {
-            color: #c0392b;
-            font-weight: 700;
-        }
-
-        .action-links a {
-            color: #3498db;
-            text-decoration: none;
-            margin-right: 15px;
-            transition: color 0.3s;
-            font-weight: 500;
-        }
-        .action-links a:hover {
-            color: #2980b9;
-            text-decoration: underline;
-        }
-        .action-links .delete-link {
-            color: #e74c3c;
-        }
-        .action-links .delete-link:hover {
-            color: #c0392b;
-        }
-    </style>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/style.css">
 </head>
 <body>
-
-<div class="header">
-    <h1 class="logo">Mon Budget 💸</h1>
-    <div class="user-info">
-        Connecté en tant que:
-        <strong style="color:#e8ffe8;"><c:out value="${sessionScope.currentUser.username}"/></strong> |
-        <a href="<%= request.getContextPath() %>/auth?action=logout">Déconnexion</a>
-    </div>
-</div>
+<jsp:include page="includes/header.jsp" />
 
 <div class="container">
     <h2>Historique des Transactions (Mois en cours) 📜</h2>
@@ -242,5 +85,6 @@
         </tbody>
     </table>
 </div>
+<jsp:include page="includes/footer.jsp" />
 </body>
 </html>

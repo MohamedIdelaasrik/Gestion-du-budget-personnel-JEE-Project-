@@ -46,6 +46,8 @@ public class RegisterServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/login");
 
         } catch (IllegalArgumentException e) {
+            request.setAttribute("oldUsername", username);
+            request.setAttribute("oldEmail", email);
             request.setAttribute("errorMessage", e.getMessage());
             request.getRequestDispatcher("/views/register.jsp").forward(request, response);
 

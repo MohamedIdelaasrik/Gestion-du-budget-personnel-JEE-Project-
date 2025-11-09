@@ -137,7 +137,6 @@ public class TransactionServlet extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/transactions");
     }
 
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -152,7 +151,6 @@ public class TransactionServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Action non supportée.");
         }
     }
-
 
     private void insertTransaction(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

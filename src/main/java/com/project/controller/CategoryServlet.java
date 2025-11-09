@@ -57,7 +57,6 @@ public class CategoryServlet extends HttpServlet {
         request.getRequestDispatcher("/views/list_categories.jsp").forward(request, response);
     }
 
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -131,7 +130,6 @@ public class CategoryServlet extends HttpServlet {
             request.getRequestDispatcher(forwardPath).forward(request, response);
         }
     }
-
 
     private void showEditForm(HttpServletRequest request, HttpServletResponse response, User user)
             throws ServletException, IOException {

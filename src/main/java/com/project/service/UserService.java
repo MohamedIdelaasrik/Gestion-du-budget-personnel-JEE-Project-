@@ -17,9 +17,8 @@ public class UserService {
 
 
     public boolean registerUser(User user) {
-        if (userDao.findByUsername(user.getUsername()).isPresent()) {
-            System.err.println("Username already exists: " + user.getUsername());
-            return false;
+        if (userDao.findByEmail(user.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("Cette adresse email est déjà utilisée par un autre compte.");
         }
 
         String hashedPassword = passwordEncoder.encode(user.getPassword());
@@ -47,5 +46,40 @@ public class UserService {
         }
 
         return Optional.empty();
+    }
+
+    public boolean checkPassword(String username, String rawPassword) {
+        Optional<User> userOptional = userDao.findByUsername(username);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            return passwordEncoder.matches(rawPassword, user.getPassword());
+        }
+
+        return false;
+    }
+
+    public boolean updateUser(long userId, String newUsername, String newRawPassword) {
+        try {
+            Optional<User> userOptional = userDao.findById(userId);
+            if (!userOptional.isPresent()) {
+                return false;
+            }
+            User user = userOptional.get();
+
+            user.setUsername(newUsername);
+
+            if (newRawPassword != null && !newRawPassword.trim().isEmpty()) {
+                String hashedPassword = passwordEncoder.encode(newRawPassword);
+                user.setPassword(hashedPassword);
+            }
+
+            userDao.update(user);
+            return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

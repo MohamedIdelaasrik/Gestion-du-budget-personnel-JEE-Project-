@@ -3,11 +3,13 @@ package com.project.service;
 import com.project.dao.TransactionDaoImpl;
 import com.project.model.Transaction;
 import com.project.model.User;
-import java.time.DayOfWeek;
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TransactionService {
 
@@ -16,7 +18,6 @@ public class TransactionService {
     public TransactionService() {
         this.transactionDao = new TransactionDaoImpl();
     }
-
 
     public void saveTransaction(Transaction transaction) {
         if (transaction.getAmount() == null || transaction.getAmount() == 0.0) {
@@ -61,34 +62,49 @@ public class TransactionService {
         return transactionDao.findById(id);
     }
 
-
-    public double calculateMonthlyBalance(User user) {
-        LocalDateTime startOfMonth = LocalDateTime.now().with(TemporalAdjusters.firstDayOfMonth()).withHour(0).withMinute(0).withSecond(0);
-        LocalDateTime endOfMonth = LocalDateTime.now().with(TemporalAdjusters.lastDayOfMonth()).withHour(23).withMinute(59).withSecond(59);
-
-        return calculateBalanceForPeriod(user, startOfMonth, endOfMonth);
+    public List<Transaction> getTransactionsForPeriod(User user, LocalDateTime startDate, LocalDateTime endDate) {
+        return transactionDao.findByUserAndPeriod(user, startDate, endDate);
     }
 
-
-    public double calculateWeeklyBalance(User user) {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime startOfWeek = now.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).withHour(0).withMinute(0).withSecond(0);
-        LocalDateTime endOfWeek = now.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)).withHour(23).withMinute(59).withSecond(59);
-
-        return calculateBalanceForPeriod(user, startOfWeek, endOfWeek);
-    }
-
-
-    public double calculateBalanceForPeriod(User user, LocalDateTime startDate, LocalDateTime endDate) {
-        List<Transaction> transactions = transactionDao.findByUserAndPeriod(user, startDate, endDate);
-
-        return transactions.stream()
+    public double getOverallBalance(User user) {
+        return transactionDao.findAllByUser(user).stream()
                 .mapToDouble(Transaction::getAmount)
                 .sum();
     }
 
+    public double getGlobalIncome(User user) {
+        return transactionDao.getGlobalIncome(user);
+    }
 
-    public List<Transaction> getTransactionsForPeriod(User user, LocalDateTime startDate, LocalDateTime endDate) {
-        return transactionDao.findByUserAndPeriod(user, startDate, endDate);
+    public double getGlobalExpenses(User user) {
+        return transactionDao.getGlobalExpenses(user);
+    }
+
+    public double getMaxMonthlyExpense(User user, LocalDateTime startDate, LocalDateTime endDate) {
+        return transactionDao.getMaxMonthlyExpense(user, startDate, endDate);
+    }
+
+    public List<Double> getDailyBalanceHistoryForMonth(User user, LocalDate date) {
+        LocalDateTime startOfMonth = date.withDayOfMonth(1).atStartOfDay();
+        int daysInMonth = date.lengthOfMonth();
+
+        double startingBalance = transactionDao.getBalanceBeforeDate(user, startOfMonth);
+
+        List<Transaction> monthlyTransactions = getTransactionsForPeriod(user, startOfMonth, date.atTime(23, 59, 59));
+
+        Map<Integer, Double> dailyTotals = monthlyTransactions.stream()
+                .collect(Collectors.groupingBy(
+                        tx -> tx.getTransactionDate().getDayOfMonth(),
+                        Collectors.summingDouble(Transaction::getAmount)
+                ));
+
+        List<Double> dailyBalances = new ArrayList<>();
+        double currentBalance = startingBalance;
+
+        for (int day = 1; day <= daysInMonth; day++) {
+            currentBalance += dailyTotals.getOrDefault(day, 0.0);
+            dailyBalances.add(currentBalance);
+        }
+        return dailyBalances;
     }
 }
